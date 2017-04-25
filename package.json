@@ -1,0 +1,19 @@
+{
+  "name": "mock-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.2",
+    "osprey-mock-service": "^0.2.1",
+    "raml-1-parser": "^1.1.20",
+    "raml-parser": "^0.8.18",
+    "rimraf": "^2.6.1",
+    "unzip": "^0.1.11"
+  }
+}
