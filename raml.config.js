@@ -4,7 +4,6 @@ const gitLab = {
     host: '',
     port: '',
     headers: {
-      'PRIVATE-TOKEN': ''
     },  
   },
   sources: [

@@ -4,12 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js"
+    "server": "node server.js --token"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^4.15.2",
+    "glob": "^7.1.1",
+    "minimist": "^1.2.0",
     "osprey-mock-service": "^0.2.1",
     "raml-1-parser": "^1.1.20",
     "raml-parser": "^0.8.18",

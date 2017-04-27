@@ -1,4 +1,3 @@
-
 const mockService = require('osprey-mock-service');
 const fs = require('fs');
 const path = require('path');
@@ -11,7 +10,10 @@ const config = require('./raml.config');
 const app = express();
 const tar = require('tar');
 const rimraf = require('rimraf');
-const PORT = 4201;
+const argv = require('minimist')(process.argv.slice(2));
+const PORT = argv.port || 4201;
+
+
 
 function chainAndLog (msg, type) {
   return function (data) {
@@ -51,7 +53,6 @@ function GET(cfg) {
 
 function parseRamls(sourses) {
   let all = [];
-  console.log('parse')
   sourses.forEach((src) => {
     all.push(parser.loadRAML(path.join(__dirname, 'temp', src), {rejectOnErrors: false}))
   });
@@ -65,8 +66,10 @@ function serializeRamls(ramlApis) {
 }
 
 function configureAndListen(ramls) {
+
   ramls.forEach(raml => {
-    app.use(osprey.server(raml));
+    console.log('raml');
+    // app.use(osprey.server(raml));
     app.use(mockService(raml));
   });
   rimraf('temp', ()=>{
@@ -80,15 +83,19 @@ function unzip (data) {
     const bufferStream = new stream.PassThrough();
     bufferStream.end(Buffer.from(data));
     bufferStream
-    .pipe(tar.Extract({path:'temp', strip: 1}))
-    .on('end', resolve);    
+      .pipe(tar.Extract({path:'temp', strip: 1}))
+      .on('end', resolve);
   })
-} 
+}
 
 function run(config) {
   let all = [];
   console.log('Getting repo');
   rimraf('temp', ()=>{
+    if(!argv.token){
+      throw new Error('Token must be provided. Please call npm run server -- --token=yourtoken')
+    }
+    config.options.headers['PRIVATE-TOKEN']= argv.token;
     GET(config.options)
       .then(chainAndLog('Unzipping'))
       .then(unzip)
@@ -98,10 +105,9 @@ function run(config) {
       .then(serializeRamls)
       .then(configureAndListen)
       .then(chainAndLog('========SUCCESSFULLY================='))
-      .then(chainAndLog(`Listening port ${PORT}`))  
+      .then(chainAndLog(`Listening port ${PORT}`))
   })
-  
+
 }
 
 run(config.fromApi.gitLab);
-
